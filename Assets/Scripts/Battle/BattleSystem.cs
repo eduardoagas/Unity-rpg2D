@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
+
 public enum BattleState {Start, ActionSelection, MoveSelection, RunningTurn, Busy, PartyScreen, BattleOver}
 public enum BattleAction {Move, SwitchPokemon, UseItem, Run}
 public class BattleSystem : MonoBehaviour
@@ -11,6 +13,8 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] BattleUnit enemyUnit;
     [SerializeField] BattleDialogBox dialogBox;
     [SerializeField] PartyScreen partyScreen;
+    [SerializeField] Image playerImage;
+    [SerializeField] Image trainerImage;
     public event Action<bool> WonBattle;
     BattleState? prevState;
     BattleState? state;
@@ -20,26 +24,57 @@ public class BattleSystem : MonoBehaviour
     bool isRunning;
 
     PokemonParty playerParty;
+    PokemonParty trainerParty;
     Pokemon wildPokemon;
-
+    bool isTrainerBattle = false;
+    PlayerController player;
+    TrainerController trainer;
     public void StartBattle(PokemonParty playerParty, Pokemon wildPokemon)
     {
-
+        isTrainerBattle = false;
         this.playerParty = playerParty;
         this.wildPokemon = wildPokemon;
         isRunning = false;
         StartCoroutine(SetupBattle());
     }
 
+    public void StartTrainerBattle(PokemonParty playerParty, PokemonParty trainerParty)
+    {
+
+        this.playerParty = playerParty;
+        this.trainerParty = trainerParty;
+        isRunning = false;
+        isTrainerBattle = true;
+        player = playerParty.GetComponent<PlayerController>();
+        trainer = trainerParty.GetComponent<TrainerController>();
+        StartCoroutine(SetupBattle());
+    }
+
+
     public IEnumerator SetupBattle(){
-        playerUnit.Setup(playerParty.GetHealthyPokemon());
-        enemyUnit.Setup(wildPokemon);
+
+        if(!isTrainerBattle){
+            playerUnit.Setup(playerParty.GetHealthyPokemon());
+            enemyUnit.Setup(wildPokemon);
+            dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
+            yield return (dialogBox.TypeDialog($"A wild {enemyUnit.Pokemon.Base.Name} appeared.")); //maybe change to dialog box?
+        }else{
+            playerUnit.gameObject.SetActive(false);
+            enemyUnit.gameObject.SetActive(false);
+
+            playerImage.gameObject.SetActive(true);
+            trainerImage.gameObject.SetActive(true);
+            playerImage.sprite = player.Sprite;
+            trainerImage.sprite = trainer.Sprite;
+
+            yield return dialogBox.TypeDialog($"{trainer.Name} wants to battle!");
+        }
+
+        
         partyScreen.Init();
-
-        dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
-
-        yield return (dialogBox.TypeDialog($"A wild {enemyUnit.Pokemon.Base.Name} appeared.")); //maybe change to dialog box?
         ActionSelection();
+
+        //what the hell is these below
         playerUnit.Pokemon.onSelfHit = PlayerSelfHit;
         enemyUnit.Pokemon.onSelfHit = EnemySelfHit;
     }

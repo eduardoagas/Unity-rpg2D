@@ -6,6 +6,8 @@ using System;
 public class PlayerController : MonoBehaviour
 {
 
+    [SerializeField] string name;
+    [SerializeField] Sprite sprite;
     public event Action OnEncountered;    
     public event Action<Collider2D> OnEnterTrainersView;
     private bool isMoving;
@@ -15,7 +17,8 @@ public class PlayerController : MonoBehaviour
     public bool changedDir;
     
     
-
+    public string Name { get => name; }
+    public Sprite Sprite { get => sprite; }
     private Character character;
 
     public CharacterAnimator Animator{

@@ -10,10 +10,12 @@ public class GameController : MonoBehaviour
     [SerializeField] PlayerController playerController;
     [SerializeField] BattleSystem battleSystem;
     [SerializeField] Camera worldCamera;
+    public static GameController Instance{get;private set;}
     GameState state;
     // Update is called once per frame
     
     private void Awake() {
+        Instance = this;
         ConditionsDB.Init();
     }
 
@@ -47,6 +49,16 @@ public class GameController : MonoBehaviour
         MapArea area = FindObjectOfType<MapArea>(); //maybe a better implementation that considers area changings
         var wildPokemon = area.GetRandomWildPokemon();
         battleSystem.StartBattle(playerParty, wildPokemon); 
+    }
+
+    public void StartTrainerBattle(TrainerController trainerController){
+        state = GameState.Battle;
+        battleSystem.gameObject.SetActive(true);
+        worldCamera.gameObject.SetActive(false);
+        var playerParty = playerController.GetComponent<PokemonParty>();
+        var trainerParty = trainerController.GetComponent<PokemonParty>();
+        MapArea area = FindObjectOfType<MapArea>(); 
+        battleSystem.StartTrainerBattle(playerParty, trainerParty); 
     }
 
     void EndBattle(bool won){
