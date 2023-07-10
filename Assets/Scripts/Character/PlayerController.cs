@@ -8,15 +8,14 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] string name;
     [SerializeField] Sprite sprite;
-    public event Action OnEncountered;    
-    public event Action<Collider2D> OnEnterTrainersView;
+    //public event Action OnEncountered;    
     private bool isMoving;
     private Vector2 input;
     //private Animator animator;
     private Vector2 lastPos;
     public bool changedDir;
     
-    
+    const float offsetY = 0.5f;
     public string Name { get => name; }
     public Sprite Sprite { get => sprite; }
     private Character character;
@@ -121,7 +120,7 @@ public class PlayerController : MonoBehaviour
         return !(Physics2D.OverlapCircle(targetPos, 0.1f, solidObjectsLayer | interactableLayer) != null);
     }*/
 
-    private void CheckForEncounters(){
+    /*private void CheckForEncounters(){
         if(Physics2D.OverlapCircle(transform.position-new Vector3(0, 0.5f, 0), 0.2f, GameLayers.i.GrassLayer) != null){
             //grassB.transform.position = transform.position-new Vector3(0, 0.3f, 0);
             if(UnityEngine.Random.Range(1,101) <= 10){
@@ -131,20 +130,29 @@ public class PlayerController : MonoBehaviour
             }
 
         }
-    }
+    }*/
 
     private void CheckIfInTrainersView(){
         var collider = Physics2D.OverlapCircle(transform.position, 0.2f, GameLayers.i.FovLayer);
         if(collider != null){
             Animator.IsMoving = false;
-            OnEnterTrainersView?.Invoke(collider);
 
         }    
     }
 
     private void OnMoveOver() {
-        //CheckForEncounters();
-        CheckIfInTrainersView();
+        var colliders = Physics2D.OverlapCircleAll(transform.position-new Vector3(0, offsetY), 0.2f, GameLayers.i.TriggerableLayers);
+
+        foreach (var collider in colliders)
+        {
+            var triggerable = collider.GetComponent<IPlayerTriggerable>();    
+            if(triggerable != null){
+                Animator.IsMoving = false;
+                triggerable.OnPlayerTriggered(this);
+                break;
+            }
+        }
+
     }
 
 

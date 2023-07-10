@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameLayers : MonoBehaviour
 {
-    [SerializeField] LayerMask solidObjectsLayer, grassLayer, interactableLayer, playerLayer, fovLayer;
+    [SerializeField] LayerMask solidObjectsLayer, grassLayer, interactableLayer, playerLayer, fovLayer, portalLayer;
 
     public static GameLayers i {get; set; }
     private void Awake() {
@@ -15,4 +15,6 @@ public class GameLayers : MonoBehaviour
     public LayerMask InteractableLayer { get => interactableLayer; set => interactableLayer = value; }
     public LayerMask PlayerLayer { get => playerLayer; set => playerLayer = value; }
     public LayerMask FovLayer { get => fovLayer; set => fovLayer = value; }
+    public LayerMask PortalLayer { get => portalLayer; set => portalLayer = value; }
+    public LayerMask TriggerableLayers { get => grassLayer | fovLayer | portalLayer;}
 }

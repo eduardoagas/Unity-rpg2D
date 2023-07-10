@@ -20,16 +20,8 @@ public class GameController : MonoBehaviour
     }
 
     void Start(){
-        playerController.OnEncountered += StartBattle;
+        //playerController.OnEncountered += StartBattle;
         battleSystem.WonBattle += EndBattle;
-
-        playerController.OnEnterTrainersView += (Collider2D trainerCollider) => {
-            var trainer = trainerCollider.GetComponentInParent<TrainerController>();
-            if(trainer != null){
-                state = GameState.Cutscene;
-                StartCoroutine(trainer.TriggerTrainerBattle(playerController));
-            }
-        };
 
         DialogueManager.Instance.OnShowDialog += ()=>{
             state =  GameState.Dialogue;
@@ -41,7 +33,7 @@ public class GameController : MonoBehaviour
         };
     }
 
-    void StartBattle(){
+    public void StartBattle(){
         state = GameState.Battle;
         battleSystem.gameObject.SetActive(true);
         worldCamera.gameObject.SetActive(false);
@@ -59,6 +51,11 @@ public class GameController : MonoBehaviour
         var trainerParty = trainerController.GetComponent<PokemonParty>();
         MapArea area = FindObjectOfType<MapArea>(); 
         battleSystem.StartTrainerBattle(playerParty, trainerParty); 
+    }
+
+    public void OnEnterTrainersView(TrainerController trainerController){
+        state = GameState.Cutscene;
+        StartCoroutine(trainerController.TriggerTrainerBattle(playerController));
     }
 
     void EndBattle(bool won){
