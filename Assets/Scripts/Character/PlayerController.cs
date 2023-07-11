@@ -14,12 +14,11 @@ public class PlayerController : MonoBehaviour
     //private Animator animator;
     private Vector2 lastPos;
     public bool changedDir;
-    
-    const float offsetY = 0.5f;
     public string Name { get => name; }
     public Sprite Sprite { get => sprite; }
     private Character character;
 
+    public Character Character => character;
     public CharacterAnimator Animator{
         get{return character.Animator;}
     }
@@ -133,7 +132,7 @@ public class PlayerController : MonoBehaviour
     }*/
 
     private void OnMoveOver() {
-       var colliders = Physics2D.OverlapCircleAll(transform.position-new Vector3(0, offsetY), 0.2f, GameLayers.i.TriggerableLayers);
+       var colliders = Physics2D.OverlapCircleAll(transform.position-new Vector3(0, character.OffsetY), 0.2f, GameLayers.i.TriggerableLayers);
             foreach (var collider in colliders)
             {
                 var triggerable = collider.GetComponent<IPlayerTriggerable>();    
