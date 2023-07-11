@@ -132,27 +132,18 @@ public class PlayerController : MonoBehaviour
         }
     }*/
 
-    private void CheckIfInTrainersView(){
-        var collider = Physics2D.OverlapCircle(transform.position, 0.2f, GameLayers.i.FovLayer);
-        if(collider != null){
-            Animator.IsMoving = false;
-
-        }    
-    }
-
     private void OnMoveOver() {
-        var colliders = Physics2D.OverlapCircleAll(transform.position-new Vector3(0, offsetY), 0.2f, GameLayers.i.TriggerableLayers);
-
-        foreach (var collider in colliders)
-        {
-            var triggerable = collider.GetComponent<IPlayerTriggerable>();    
-            if(triggerable != null){
-                Animator.IsMoving = false;
-                triggerable.OnPlayerTriggered(this);
-                break;
+       var colliders = Physics2D.OverlapCircleAll(transform.position-new Vector3(0, offsetY), 0.2f, GameLayers.i.TriggerableLayers);
+            foreach (var collider in colliders)
+            {
+                var triggerable = collider.GetComponent<IPlayerTriggerable>();    
+                if(triggerable != null){
+                    Animator.IsMoving = false;
+                    triggerable.OnPlayerTriggered(this);
+                    break;
+                }
             }
-        }
-
+            
     }
 
 
