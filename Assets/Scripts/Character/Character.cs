@@ -67,14 +67,14 @@ public class Character : MonoBehaviour
         
         if(grassClone != null){
             Destroy(grassClone);
-            //grassB.SetActive(false);
+            grassB.SetActive(false);
             Debug.Log("destruí");
         }
         if(Physics2D.OverlapCircle(targetPos, 0.15f, GameLayers.i.GrassLayer) != null){
                     if(input.y != 1){
                         //grassB.SetActive(true);
                          grassClone = Instantiate(grassB);
-                         //grassClone.SetActive(true);
+                         grassClone.SetActive(true);
                          //grassClone.GetComponent<SpriteRenderer>().enabled = true;
                          grassClone.transform.position = targetPos-new Vector3(0, 0.3f, 0);
                      }            
